@@ -2,6 +2,7 @@
 [![Python Version](https://img.shields.io/pypi/pyversions/tstr)](https://pypi.org/project/tstr/)
 [![License](https://img.shields.io/github/license/ilotoki0804/tstr)](https://github.com/ilotoki0804/tstr/blob/master/LICENSE)
 [![Tests](https://github.com/ilotoki0804/tstr/workflows/testing/badge.svg)](https://github.com/ilotoki0804/tstr/actions)
+[![Coverage Status](https://coveralls.io/repos/github/ilotoki0804/tstr/badge.svg?branch=main)](https://coveralls.io/github/ilotoki0804/tstr?branch=main)
 
 Various template string utilities, with backports for older versions of Python.
 
