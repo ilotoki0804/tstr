@@ -358,37 +358,3 @@ def generate_template(
 
 
 t = generate_template
-
-
-class _FrameVariables:
-    """
-    A class for accessing variables from the current frame and its parent frames (ancestors).
-
-    This class allows retrieving both local and non-local variables by traversing up the stack frame hierarchy,
-    enabling access to variables that are defined in parent scopes.
-    """
-
-    def __init__(self, frame: types.FrameType) -> None:
-        self._first_frame = frame
-        self._current_frame = frame
-        self._variables = frame.f_locals
-        self._reach_end = False
-        self.shallow_getitem = True
-
-    def __getitem__(self, key: str) -> object:
-        try:
-            return self._variables[key]
-        except KeyError:
-            if self._reach_end or self.shallow_getitem:
-                raise
-
-        self._retrieve_parent_frame()
-        return self[key]
-
-    def _retrieve_parent_frame(self) -> None:
-        parent_frame = self._current_frame.f_back
-        if parent_frame is None:
-            self._reach_end = True
-            return
-        self._current_frame = parent_frame
-        self._variables.update(parent_frame.f_locals)
