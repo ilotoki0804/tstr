@@ -1,0 +1,47 @@
+[project]
+name = "tstr"
+description = "Template string utilities and backports"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "ilotoki0804", email = "ilotoki0804@gmail.com" }]
+license = "Apache-2.0"
+keywords = [
+    "template",
+    "string",
+    "utility",
+    "backport",
+]
+dependencies = []
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.14",
+]
+dynamic = ["version"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "pytest-cov>=6.1.1",
+]
+
+[project.urls]
+Repository = "https://github.com/ilotoki0804/tstr"
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "UP", "W"]
+ignore = ["E501", "E402", "S101", "UP038"]
+
+[tool.hatch.version]
+path = "src/tstr/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tstr"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

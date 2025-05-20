@@ -1,0 +1,11 @@
+{
+    "cSpell.words": [
+        "fetchone",
+        "intp",
+        "intrp",
+        "pytest",
+        "templatelib",
+        "tstr"
+    ],
+    "python.analysis.typeCheckingMode": "standard"
+}
