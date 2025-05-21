@@ -263,7 +263,6 @@ def _bind_iterator(template: Template, binder):
 def generate_template(
     string: typing.LiteralString,
     context: typing.Mapping[str, object] | None = None,
-    /,
     *,
     globals: dict | None = None,
     use_eval: bool | None = None,
@@ -322,9 +321,10 @@ def generate_template(
         assert f(template) == "Result: 15"
         ```
     """
+    if use_eval is None:
+        use_eval = context is None and globals is None
+
     if context is None or globals is None:
-        if use_eval is None:
-            use_eval = True
         if (frame := inspect.currentframe()) and (parent_frame := frame.f_back):
             if context is None:
                 context = parent_frame.f_locals
@@ -335,8 +335,6 @@ def generate_template(
                 context = {}
             if globals is None:
                 globals = {}
-    elif use_eval is None:
-        use_eval = False
 
     parts = []
     for value, expr, format_spec, conv in _formatter.parse(string):

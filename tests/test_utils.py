@@ -15,6 +15,7 @@ from tstr import (
     t,
     template_eq,
 )
+from tstr._utils import TemplateGenerationError
 
 
 def test_converter_repr_conversion():
@@ -123,3 +124,34 @@ def test_template_eq_multiple_interpolations():
     assert template_eq(template1, template2)
     assert not template_eq(template1, template3)
     assert template_eq(template1, template3, compare_value=False)
+
+
+def test_use_eval():
+    val = "value"
+
+    template = t("{42!s} {val}", use_eval=True)
+    assert f(template) == "42 value"
+
+    with pytest.raises(TemplateGenerationError):
+        template = t("{42!s} {val}", use_eval=False)
+
+    template = t("{val} text", use_eval=True)
+    assert f(template) == "value text"
+
+    template = t("{val} text", use_eval=False)
+    assert f(template) == "value text"
+
+    template = t("{42} {val}")
+    assert f(template) == "42 value"
+
+    with pytest.raises(TemplateGenerationError):
+        t("{42} {con}", context=dict(con="text"))
+
+    with pytest.raises(TemplateGenerationError):
+        t("{42} {con}", globals=dict(con="text"))
+
+    template = t("{42} {con}", context=dict(con="text"), use_eval=True)
+    assert f(template) == "42 text"
+
+    template = t("{42} {con}", globals=dict(con="text"), use_eval=True)
+    assert f(template) == "42 text"
