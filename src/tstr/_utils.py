@@ -174,13 +174,13 @@ def binder(binder, joiner="".join) -> typing.Any:
     Example:
         ```python
         @binder
-        def html_render(interpolation: Interpolation) -> str:
+        def render_html(interpolation: Interpolation) -> str:
             # Example binder that escapes HTML in interpolations
             return escape(normalize_str(interpolation))
 
         username = "<script>alert('XSS')</script>"
         template = t"Hello {username}!"
-        result = html_render(template)
+        result = render_html(template)
         assert result == "Hello &lt;script&gt;alert(&#x27;XSS&#x27;)&lt;/script&gt;!"
         ```
     """

@@ -6,11 +6,11 @@ import json
 from tstr import Interpolation, binder
 from tstr._utils import convert
 
-__all__ = ["html_render"]
+__all__ = ["render_html"]
 
 
 @binder
-def html_render(intp: Interpolation) -> str:
+def render_html(intp: Interpolation) -> str:
     """
     Escapes HTML special characters in interpolations for safe HTML rendering.
 
@@ -31,26 +31,26 @@ def html_render(intp: Interpolation) -> str:
 
     Examples:
         ```python
-        from tstr._html import html_render
+        from tstr._html import render_html
 
         # Basic HTML escaping
         username = "<script>alert('XSS')</script>"
-        result = html_render(t"<div>Welcome, {username}!</div>")
+        result = render_html(t"<div>Welcome, {username}!</div>")
         # Result: "<div>Welcome, &lt;script&gt;alert(&#x27;XSS&#x27;)&lt;/script&gt;!</div>"
 
         # Including raw HTML
         title_html = "<b>Important Notice</b>"
-        result = html_render(t"<h1>{title_html:raw}</h1>")
+        result = render_html(t"<h1>{title_html:raw}</h1>")
         # Result: "<h1><b>Important Notice</b></h1>"
 
         # Converting to JSON
         data = {"name": "John", "age": 30}
-        result = html_render(t"<script>const user = {data:json};</script>")
+        result = render_html(t"<script>const user = {data:json};</script>")
         # Result: '<script>const user = {"name": "John", "age": 30};</script>'
 
         # HTML attributes from dictionary
         attributes = {"src": "/image.jpg", "alt": "Profile picture", "data_index": 1}
-        result = html_render(t"<img {attributes:attrs}>")
+        result = render_html(t"<img {attributes:attrs}>")
         # Result: '<img src="/image.jpg" alt="Profile picture" data-index="1">'
         ```
     """
