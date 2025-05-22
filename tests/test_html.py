@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import pytest
-from tstr._html import render_html
-from tstr import t, f
+
+from tstr import f, t
+from tstr._html import Attribute, render_html
 
 
 def test_render_html_escapes_html():
@@ -31,6 +32,12 @@ def test_render_html_attrs():
     template = t("<img {dict(src='image.jpg', alt='I like t-strings', data_hello='world'):attrs} />")
     result = render_html(template)
     assert result == '<img src="image.jpg" alt="I like t-strings" data-hello="world" />'
+
+
+def test_render_html_attrs_with_class():
+    template = t('<img {Attribute(src="/image.jpg", alt="Profile picture", data_index="1")} />')
+    result = render_html(template)
+    assert result == '<img src="/image.jpg" alt="Profile picture" data-index="1" />'
 
 
 def test_render_html_with_conversion():

@@ -9,6 +9,10 @@ from tstr._utils import convert
 __all__ = ["render_html"]
 
 
+class Attribute(dict):
+    """HTML attributes dictionary"""
+
+
 @binder
 def render_html(intp: Interpolation) -> str:
     """
@@ -31,7 +35,7 @@ def render_html(intp: Interpolation) -> str:
 
     Examples:
         ```python
-        from tstr._html import render_html
+        from tstr._html import render_html, Attribute
 
         # Basic HTML escaping
         username = "<script>alert('XSS')</script>"
@@ -50,8 +54,11 @@ def render_html(intp: Interpolation) -> str:
 
         # HTML attributes from dictionary
         attributes = {"src": "/image.jpg", "alt": "Profile picture", "data_index": 1}
-        result = render_html(t"<img {attributes:attrs}>")
-        # Result: '<img src="/image.jpg" alt="Profile picture" data-index="1">'
+        result = render_html(t"<img {attributes:attrs} />")
+        # Result: '<img src="/image.jpg" alt="Profile picture" data-index="1" />'
+
+        # HTML attributes with Attribute class
+        result = render_html(t"<img {Attribute(src="/image.jpg", alt="Profile picture", data_index=1)} />")
         ```
     """
     match intp.format_spec, convert(intp.value, intp.conversion):
@@ -61,7 +68,7 @@ def render_html(intp: Interpolation) -> str:
             return value
         case "json", value:
             return json.dumps(value)
-        case "attrs" | "attr", value:
+        case ("", Attribute() as value) | ("attrs" | "attr", value):
             return " ".join(
                 f'{attr.replace("_", "-")}="{escape(value)}"'
                 for attr, value in value.items()  # type: ignore
