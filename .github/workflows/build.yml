@@ -1,0 +1,61 @@
+name: Build PyPI Package
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  release-package:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message, 'release')
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: install dependencies
+      run: |
+        pip install -e . hatch
+
+    - name: build and publish package
+      run: |
+        hatch build
+        hatch publish -u __token__ -a "${{ secrets.PYPI_TOKEN }}"
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: upload build
+        path: dist/*
+
+  build-package:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message, 'build')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+  
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+  
+      - name: install dependencies
+        run: |
+          pip install -e . hatch
+
+      - name: build and publish package
+        run: |
+          hatch build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upload build
+          path: dist/*
