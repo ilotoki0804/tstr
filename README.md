@@ -1,19 +1,18 @@
+# tstr - PEP 750 Template String Utilities & Backports
+
 [![PyPI Version](https://img.shields.io/pypi/v/tstr)](https://pypi.org/project/tstr/)
 [![Python Version](https://img.shields.io/pypi/pyversions/tstr)](https://pypi.org/project/tstr/)
 [![License](https://img.shields.io/github/license/ilotoki0804/tstr)](https://github.com/ilotoki0804/tstr/blob/master/LICENSE)
 [![Tests](https://github.com/ilotoki0804/tstr/workflows/testing/badge.svg)](https://github.com/ilotoki0804/tstr/actions)
 [![Coverage Status](https://coveralls.io/repos/github/ilotoki0804/tstr/badge.svg?branch=main)](https://coveralls.io/github/ilotoki0804/tstr?branch=main)
 
-Various template string utilities, with backports for older versions of Python.
+`tstr` provides utilities for working with [PEP 750 template strings](https://peps.python.org/pep-0750/), along with robust backports for older Python versions.
 
-`tstr` is a Python library that provides convenient utility functions for working with [PEP 750 template strings](https://peps.python.org/pep-0750/).
-`tstr` makes template strings easier to use by providing common processing patterns and utilities.
-
-For Python versions older than 3.14, `tstr` includes a backport allowing you to use template strings functionality in earlier Python versions.
+This library streamlines template string usage by offering practical helpers and common processing patterns. For Python versions prior to 3.14, `tstr` seamlessly backports template string functionality.
 
 ## Installation
 
-You can install the `tstr` package using pip:
+Install `tstr` via pip:
 
 ```bash
 pip install tstr
@@ -21,134 +20,86 @@ pip install tstr
 
 ## Features
 
-- Create and manipulate template strings programmatically
-- Full compatibility with Python 3.14's template strings (PEP 750)
-- Backport for Python 3.10-3.13
-- Utility functions for binding, rendering, and comparing templates
+- `render` (alias: `f`): Render a template to a string, mimicking f-string behavior.
+- `generate_template` (alias: `t`): Create a Template object from a string and context.
+    This function is especially useful on Python versions that do not support template strings natively.
+- `bind`: Apply a function to all interpolations in a template.
+- `binder`: Decorator to create template processors from an interpolation processor.
+- `normalize`: Convert an interpolation to its value, preserving type when possible.
+- `normalize_str`: Convert an interpolation to a string.
+- `convert`: Apply f-string-style conversion to a value.
+- `template_eq`: Check if two templates are equivalent.
 
-## Installation
+Experimental applications:
 
-```bash
-pip install tstr
+- `render_html`: Render templates with HTML escaping.
+- `execute`: Safely execute SQL with templates, preventing injection.
+- `TemplateFormatter`: Enable Python's logging module to accept template strings.
+
+Below are usage examples for each function. For more details, see the [API documentation](/docs/api.md).
+
+```python
+from tstr import Template, Interpolation, generate_template, render, bind, binder, f, normalize, normalize_str, convert, template_eq
+
+# Rendering templates
+x = 12
+template = t"Value: {x}"
+print(render(template))  # "Value: 12"
+print(f(template))  # "Value: 12"
+
+# Generating templates
+template = generate_template("Hello, {name}!", {"name": "Alice"})  # with explicit context
+print(f(template))  # "Hello, Alice!"
+
+name = "Bob"
+template = generate_template("Nice to meet you, {name}!")  # without explicit context
+print(f(template))  # "Nice to meet you, Bob!"
+
+template = t("Nice to meet you, {name}!")  # with an alias `t`
+print(f(template))  # "Nice to meet you, Bob!"
+
+# Binding all interpolations
+def double(i: Interpolation):
+    return str(i.value * 2)
+n = 10
+template = t"Double: {n}"
+print(bind(template, double))  # "Double: 20"
+
+@binder
+def upper(i):
+    return normalize_str(i).upper()
+name = 'bob'
+template = t"Hi, {name}!"
+print(upper(template))  # "Hi, BOB!"
+
+# Applying conversion and formatting
+age = 20
+template = t"Age: {age:04d}"
+intp = template.interpolations[0]
+print(normalize(intp))  # "0020"
+
+# Applying conversion
+print(convert(42, "r"))  # e.g., "42"
+
+# Template equivalence
+x = 123
+t1 = t"A: {x}"
+t2 = t"A: {x}"
+print(template_eq(t1, t2))  # True
 ```
-
-## Included Functions
-
-- `generate_template` (alias: `t`) - Construct a Template object from a string and context
-- `render` (alias: `f`)- Render a template to a string, just like f-strings
-- `bind` - Process a template's interpolations with a binder function
-- `binder` - Create a reusable template processor function
-- `normalize` - Convert an interpolation to its value, preserving type when possible
-- `normalize_str` - Convert an interpolation to a string
-- `convert` - Apply f-string-like conversion to a value
-- `converter` - Get a callable that performs f-string conversion
-- `template_eq` - Compare two templates for equivalence
-
-The package includes the following experimental applications:
-
-- `html_render` - Escape HTML with templates
-- `execute` - Execute SQL with templates, preventing injection attacks
 
 ## Compatibility
 
-The package automatically detects if native template strings (PEP 750) are supported in your Python version:
+`tstr` automatically detects native template string support (PEP 750):
 
-- Python 3.14+: Uses native template string
-- Python 3.10-3.13: Uses compatible backport implementation
+- Python 3.14+: Uses native template strings.
+- Python 3.10–3.13: Uses a compatible backport.
 
-The package provides a boolean constant `TEMPLATE_STRING_SUPPORTED` to check if your Python version supports template strings.
+Use the `TEMPLATE_STRING_SUPPORTED` constant to check if template strings are natively supported in your Python version.
 
-## Usage
+# Contributing
 
-### Creating Templates
-
-```python
-from tstr import t, f, generate_template
-
-# Create a template string literal
-name = "world"
-template = t"Hello, {name}!"
-# and render it
-print(f(template))  # "Hello, world!"
-
-# Create templates programmatically (useful for Python < 3.14)
-template = generate_template("Hello, {name}!")
-print(f(template))  # "Hello, world!"
-# or using t()
-template = t("Hello, {name}!")
-print(f(template))  # "Hello, world!"
-```
-
-### Template Operations
-
-```python
-from tstr import t, f, normalize, normalize_str, template_eq
-
-# Normalize interpolations
-age = 42
-template = t"Hello, {age}!"
-interp = template.interpolations[0]
-print(normalize(interp))  # 42
-print(normalize_str(interp))  # "42"
-
-# Compare templates
-name = "Python"
-t1 = t("Hello, {name}!")
-t2 = t("Hello, {name}!")
-assert template_eq(t1, t2)
-```
-
-### Custom Template Processors
-
-```python
-from tstr import t, binder, Interpolation
-
-# binder decorates a function that accepts Interpolation values
-# and transforms it into a Template converter
-@binder
-def uppercase_names(i: Interpolation) -> str:
-    return normalize_str(i.value).upper()
-
-name = "world"
-template = t("Hello, {name}!")
-print(uppercase_names(template))  # "Hello, WORLD!"
-```
-
-## Experimental Applications
-
-`tstr` includes several experimental applications that demonstrate how template strings can be applied in real-world scenarios:
-
-### Safe HTML Rendering
-
-Automatically escape HTML special characters in template interpolations to prevent XSS attacks:
-
-```python
-from tstr._html import html_render
-
-user_input = "<script>alert('XSS')</script>"
-template = t"<div>{user_input}</div>"
-assert html_render(template) == "<div>&lt;script&gt;alert(&#x27;XSS&#x27;)&lt;/script&gt;</div>"
-```
-
-### SQL Injection Prevention
-
-Execute SQL queries with template strings while protecting against SQL injection:
-
-```python
-from tstr._sqlite import execute
-import sqlite3
-
-conn = sqlite3.connect(":memory:")
-cursor = conn.cursor()
-cursor.execute("CREATE TABLE users (id PRIMARY KEY, name STRING)")
-cursor.execute("INSERT INTO users (name) VALUES ('hello')")
-
-user_input = "'; DROP TABLE users; --"
-assert execute(cursor, t"SELECT * FROM users WHERE name = {user_input}").fetchone() is None
-
-cursor.close()
-conn.close()
-```
+This project welcomes contributions of all kinds from anyone willing to help improve it! Whether you're fixing a typo in documentation, reporting a bug, proposing a new feature, or implementing code changes - every contribution matters and is highly appreciated.
 
 ## License
 
