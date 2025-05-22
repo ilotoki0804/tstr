@@ -1,9 +1,12 @@
 {
     "cSpell.words": [
         "fetchone",
+        "interp",
         "intp",
         "intrp",
         "pytest",
+        "renderable",
+        "repr",
         "templatelib",
         "tstr"
     ],
