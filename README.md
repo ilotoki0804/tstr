@@ -101,6 +101,11 @@ Use the `TEMPLATE_STRING_SUPPORTED` constant to check if template strings are na
 
 This project welcomes contributions of all kinds from anyone willing to help improve it! Whether you're fixing a typo in documentation, reporting a bug, proposing a new feature, or implementing code changes - every contribution matters and is highly appreciated.
 
+## Releases
+
+* 0.2.0: Rename html_render to render_html, add `_logging` module, fix various bugs and improve documentation
+* 0.1.1.post1: Initial release
+
 ## License
 
 Apache License 2.0

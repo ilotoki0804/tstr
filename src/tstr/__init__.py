@@ -39,4 +39,4 @@ __all__ = [
     "template_eq",
     "StringOrTemplate",
 ]
-__version__ = "0.1.1.post1"
+__version__ = "0.2.0"
