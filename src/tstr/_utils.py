@@ -339,8 +339,8 @@ def generate_template(
                 globals = {}
 
     parts = []
-    for value, expr, format_spec, conv in _formatter.parse(string):
-        parts.append(value)
+    for literal, expr, format_spec, conv in _formatter.parse(string):
+        parts.append(literal)
         if expr is not None:
             try:
                 value = context[expr]
