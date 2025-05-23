@@ -18,6 +18,7 @@ from ._utils import (
     render,
     t,
     template_eq,
+    interpolation_replace,
 )
 
 __all__ = [
@@ -38,5 +39,6 @@ __all__ = [
     "TEMPLATE_STRING_SUPPORTED",
     "template_eq",
     "StringOrTemplate",
+    "interpolation_replace",
 ]
 __version__ = "0.2.0"

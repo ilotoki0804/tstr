@@ -6,10 +6,13 @@ import pytest
 
 from tstr import (
     CONVERTERS,
+    Template,
     bind,
     binder,
     convert,
     f,
+    generate_template,
+    interpolation_replace,
     normalize,
     normalize_str,
     t,
@@ -155,3 +158,66 @@ def test_use_eval():
 
     template = t("{42} {con}", globals=dict(con="text"), use_eval=True)
     assert f(template) == "42 text"
+
+
+def test_interpolation_replace():
+    """Test the interpolation_replace function with various replacement scenarios."""
+    # Setup a template with an interpolation
+    name = "world"
+    template = generate_template("Hello {name:>10}!")
+    orig_interp = template.interpolations[0]
+
+    # Test replacing just the value
+    new_interp = interpolation_replace(orig_interp, value="universe")
+    assert new_interp.value == "universe"
+    assert new_interp.expression == orig_interp.expression
+    assert new_interp.format_spec == ">10"
+    assert new_interp.conversion == orig_interp.conversion
+
+    # Test replacing just the format specification
+    new_interp = interpolation_replace(orig_interp, format_spec="^20")
+    assert new_interp.value == "world"
+    assert new_interp.format_spec == "^20"
+    assert new_interp.expression == orig_interp.expression
+
+    # Test replacing just the conversion
+    new_interp = interpolation_replace(orig_interp, conversion="r")
+    assert new_interp.conversion == "r"
+    assert f(Template("", new_interp)) == "   'world'"
+
+    # Test replacing just the expression (expression changes don't affect evaluation)
+    new_interp = interpolation_replace(orig_interp, expression="new_name")
+    assert new_interp.expression == "new_name"
+    assert new_interp.value == "world"  # Value remains unchanged
+
+    # Test replacing multiple attributes
+    new_interp = interpolation_replace(
+        orig_interp,
+        value=123,
+        format_spec=".2f",
+    )
+    assert new_interp.value == 123
+    assert new_interp.format_spec == ".2f"
+    assert f(Template("", new_interp)) == "123.00"
+
+    # Verify original interpolation is not modified
+    assert orig_interp.value == "world"
+    assert orig_interp.format_spec == ">10"
+    assert orig_interp.conversion is None
+
+    # Test with complex combinations
+    numeric_value = 42
+    orig_template = generate_template("Value: {numeric_value:.1f}")
+    orig_numeric_interp = orig_template.interpolations[0]
+
+    # Change numeric value with different format
+    new_interp = interpolation_replace(
+        orig_numeric_interp,
+        value=3.14159,
+        format_spec=".4f"
+    )
+    assert f(Template("", new_interp)) == "3.1416"
+
+    # Change to different conversion
+    new_interp = interpolation_replace(orig_numeric_interp, conversion="r", format_spec="")
+    assert f(Template("", new_interp)) == "42"  # repr of 42 is just "42"

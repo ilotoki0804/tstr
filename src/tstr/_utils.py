@@ -18,6 +18,7 @@ __all__ = [
     "generate_template",
     "TemplateGenerationError",
     "template_eq",
+    "interpolation_replace",
 ]
 
 _formatter = Formatter()
@@ -262,6 +263,74 @@ def _bind_iterator(template: Template, binder):
             yield binder(item)
 
 
+_NOTSET = object()
+
+
+def interpolation_replace(
+    interp: Interpolation,
+    *,
+    value: object = _NOTSET,
+    expression: str = _NOTSET,  # type: ignore
+    conversion: typing.Literal["a", "r", "s"] | None = _NOTSET,  # type: ignore
+    format_spec: str = _NOTSET,  # type: ignore
+) -> Interpolation:
+    """
+    Creates a new Interpolation by selectively replacing attributes of an existing one.
+
+    This function allows you to create a modified copy of an Interpolation object
+    by specifying which attributes to replace. Any attribute not explicitly provided
+    will retain its original value from the input interpolation.
+
+    Args:
+        interp (Interpolation): The original interpolation object.
+        value (object, optional): New value to use instead of the original.
+        expression (str, optional): New expression to use instead of the original.
+        conversion (Literal["a", "r", "s"] | None, optional): New conversion to use.
+        format_spec (str, optional): New format specification to use.
+
+    Returns:
+        Interpolation: A new Interpolation with the specified replacements.
+
+    Example:
+        ```python
+        name = "world"
+        template = t"Hello {name:>10}!"
+        orig_interp = template.interpolations[0]
+
+        # Replace just the value
+        new_interp = interpolation_replace(orig_interp, value="universe")
+        assert new_interp.value == "universe"
+        assert new_interp.expression == orig_interp.expression
+        assert new_interp.format_spec == ">10"
+
+        # Replace the format specification
+        new_interp = interpolation_replace(orig_interp, format_spec="^20")
+        assert new_interp.value == "world"
+        assert new_interp.format_spec == "^20"
+
+        # Replace the conversion
+        new_interp = interpolation_replace(orig_interp, conversion="r")
+        assert new_interp.conversion == "r"
+        assert f(Template("", new_interp)) == "   'world'"
+
+        # Replace multiple attributes
+        new_interp = interpolation_replace(
+            orig_interp,
+            value=123,
+            format_spec=".2f",
+        )
+        assert new_interp.value == 123
+        assert new_interp.format_spec == ".2f"
+        assert f(Template("", new_interp)) == "123.00"
+        ```
+    """
+    value = interp.value if value is _NOTSET else value
+    expression = interp.expression if expression is _NOTSET else expression
+    conversion = interp.conversion if conversion is _NOTSET else conversion
+    format_spec = interp.format_spec if format_spec is _NOTSET else format_spec
+    return Interpolation(value, expression, conversion, format_spec)  # type: ignore
+
+
 def generate_template(
     string: typing.LiteralString | str,  # LiteralString is ineffective for static type checking here
     context: typing.Mapping[str, object] | None = None,
@@ -345,7 +414,12 @@ def generate_template(
             try:
                 value = context[expr]
             except Exception:
-                no_key = True
+                try:
+                    value = f"{{{expr}}}".format_map(context)
+                except Exception:
+                    no_key = True
+                else:
+                    no_key = False
             else:
                 no_key = False
             if no_key:
