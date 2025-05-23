@@ -75,8 +75,8 @@ print(upper(template))  # "Hi, BOB!"
 # Applying conversion and formatting
 age = 20
 template = t"Age: {age:04d}"
-intp = template.interpolations[0]
-print(normalize(intp))  # "0020"
+interp = template.interpolations[0]
+print(normalize(interp))  # "0020"
 
 # Applying conversion
 print(convert(42, "r"))  # e.g., "42"

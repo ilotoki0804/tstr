@@ -14,7 +14,7 @@ class Attribute(dict):
 
 
 @binder
-def render_html(intp: Interpolation) -> str:
+def render_html(interp: Interpolation) -> str:
     """
     Escapes HTML special characters in interpolations for safe HTML rendering.
 
@@ -61,7 +61,7 @@ def render_html(intp: Interpolation) -> str:
         result = render_html(t"<img {Attribute(src="/image.jpg", alt="Profile picture", data_index=1)} />")
         ```
     """
-    match intp.format_spec, convert(intp.value, intp.conversion):
+    match interp.format_spec, convert(interp.value, interp.conversion):
         case "", str(value):
             return escape(value)
         case "raw", str(value):

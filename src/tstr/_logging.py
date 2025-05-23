@@ -18,10 +18,10 @@ class TemplateFormatter(logging.Formatter):
     default_renderer = staticmethod(render)
 
     @binder
-    def execute_callable(intp: Interpolation) -> str:
-        value = intp.value() if callable(intp.value) else intp.value
-        converted = convert(value, intp.conversion)
-        return format(converted, intp.format_spec)
+    def execute_callable(interp: Interpolation) -> str:
+        value = interp.value() if callable(interp.value) else interp.value
+        converted = convert(value, interp.conversion)
+        return format(converted, interp.format_spec)
 
     def __init__(self, renderer: Renderer | None = None, fmt: str | None = None, datefmt: str | None = None) -> None:
         super().__init__(fmt=fmt, datefmt=datefmt, validate=False)

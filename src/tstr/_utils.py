@@ -55,7 +55,7 @@ def convert(
     return CONVERTERS[conversion](value) if conversion else value
 
 
-def normalize_str(intp: Interpolation) -> str:
+def normalize_str(interp: Interpolation) -> str:
     """
     Normalizes a PEP 750 Interpolation to a formatted string.
 
@@ -64,16 +64,16 @@ def normalize_str(intp: Interpolation) -> str:
     Unlike normalize(), this always returns a string.
 
     Args:
-        intp (Interpolation): The interpolation to normalize.
+        interp (Interpolation): The interpolation to normalize.
 
     Returns:
         str: The formatted string representation of the interpolation.
     """
-    converted = convert(intp.value, intp.conversion)
-    return format(converted, intp.format_spec)
+    converted = convert(interp.value, interp.conversion)
+    return format(converted, interp.format_spec)
 
 
-def normalize(intp: Interpolation) -> str | object:
+def normalize(interp: Interpolation) -> str | object:
     """
     Normalizes a PEP 750 Interpolation, preserving its type when possible.
 
@@ -84,16 +84,16 @@ def normalize(intp: Interpolation) -> str | object:
     is returned without any modification, ensuring that the value's type is preserved.
 
     Args:
-        intp (Interpolation): The interpolation to normalize.
+        interp (Interpolation): The interpolation to normalize.
 
     Returns:
         str | object: The normalized string if conversion or format spec is specified, otherwise
             the original value.
     """
-    if intp.conversion or intp.format_spec:
-        return normalize_str(intp)
+    if interp.conversion or interp.format_spec:
+        return normalize_str(interp)
     else:
-        return intp.value
+        return interp.value
 
 
 @typing.overload
