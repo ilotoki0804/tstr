@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import inspect
-import types
 import typing
 from string import Formatter
 
@@ -50,7 +49,7 @@ def convert(
         conversion (Conversion | None): The conversion specifier ('a', 'r', or 's'), or None.
 
     Returns:
-        str: The value converted according to the specified conversion;
+        T | str: The value converted according to the specified conversion;
             if 'conversion' is None, returns the original value unchanged.
     """
     return CONVERTERS[conversion](value) if conversion else value
@@ -65,7 +64,7 @@ def normalize_str(intp: Interpolation) -> str:
     Unlike normalize(), this always returns a string.
 
     Args:
-        interpolation (Interpolation): The interpolation to normalize.
+        intp (Interpolation): The interpolation to normalize.
 
     Returns:
         str: The formatted string representation of the interpolation.
@@ -85,7 +84,7 @@ def normalize(intp: Interpolation) -> str | object:
     is returned without any modification, ensuring that the value's type is preserved.
 
     Args:
-        interpolation (Interpolation): The interpolation to normalize.
+        intp (Interpolation): The interpolation to normalize.
 
     Returns:
         str | object: The normalized string if conversion or format spec is specified, otherwise
@@ -132,6 +131,9 @@ def bind(template: Template, binder, *, joiner="".join) -> typing.Any:
         template (Template): A template to process.
         binder: A callable that transforms each Interpolation.
         joiner: A callable to join the processed template parts.
+
+    Returns:
+        The result of applying the joiner to the processed template parts.
     """
     if not isinstance(template, Template):
         raise TypeError(f"Expected Template, got {type(template).__name__}")
@@ -261,7 +263,7 @@ def _bind_iterator(template: Template, binder):
 
 
 def generate_template(
-    string: typing.LiteralString,
+    string: typing.LiteralString | str,  # LiteralString is ineffective for static type checking here
     context: typing.Mapping[str, object] | None = None,
     *,
     globals: dict | None = None,
@@ -350,7 +352,7 @@ def generate_template(
                 if use_eval:
                     value = eval(expr, globals, context)
                 else:
-                    raise TemplateGenerationError(f"'{expr}' is not defined or expression.")
+                    raise TemplateGenerationError(f"'{expr}' is not defined in context or is a complex expression.")
             parts.append(Interpolation(value, expr, conv, format_spec))  # type: ignore
     return Template(*parts)  # type: ignore
 
