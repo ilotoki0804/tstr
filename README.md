@@ -25,9 +25,8 @@ pip install tstr
     This function is especially useful on Python versions that do not support template strings natively.
 - `bind`: Apply a function to all interpolations in a template.
 - `binder`: Decorator to create template processors from an interpolation processor.
-- `normalize`: Convert an interpolation to its value, preserving type when possible.
-- `normalize_str`: Convert an interpolation to a string.
-- `convert`: Apply f-string-style conversion to a value.
+- `normalize` / `normalize_str`: Apply conversion and format to value.
+- `convert`: Apply conversion to a value.
 - `template_eq`: Check if two templates are equivalent.
 
 Experimental applications:
@@ -68,7 +67,7 @@ print(bind(template, double))  # "Double: 20"
 @binder
 def upper(i):
     return normalize_str(i).upper()
-name = 'bob'
+name = "bob"
 template = t"Hi, {name}!"
 print(upper(template))  # "Hi, BOB!"
 
