@@ -28,6 +28,7 @@ pip install tstr
 - `normalize` / `normalize_str`: Apply conversion and format to value.
 - `convert`: Apply conversion to a value.
 - `template_eq`: Check if two templates are equivalent.
+- `interpolation_replace`: Create a new `Interpolation` by selectively replacing attributes of an existing one.
 
 Experimental applications:
 
@@ -38,7 +39,7 @@ Experimental applications:
 Below are usage examples for each function. For more details, see the [API documentation](/docs/api.md).
 
 ```python
-from tstr import Template, Interpolation, generate_template, render, bind, binder, f, normalize, normalize_str, convert, template_eq
+from tstr import Template, Interpolation, generate_template, render, bind, binder, f, normalize, normalize_str, convert, template_eq, interpolation_replace
 
 # Rendering templates
 x = 12
@@ -85,6 +86,16 @@ x = 123
 t1 = t"A: {x}"
 t2 = t"A: {x}"
 print(template_eq(t1, t2))  # True
+
+# Interpolation replacement
+name = "world"
+template = t"Hello {name:>10}!"
+orig_interp = template.interpolations[0]
+
+# Replace just the value
+new_interp = interpolation_replace(orig_interp, value="universe")
+assert new_interp.value == "universe"
+assert new_interp.format_spec == ">10"
 ```
 
 ## Compatibility
