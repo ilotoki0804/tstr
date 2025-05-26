@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import inspect
+
 import pytest
 
 from tstr import (
@@ -221,3 +223,79 @@ def test_interpolation_replace():
     # Change to different conversion
     new_interp = interpolation_replace(orig_numeric_interp, conversion="r", format_spec="")
     assert f(Template("", new_interp)) == "42"  # repr of 42 is just "42"
+
+
+def test_generate_template_with_frame():
+    """Test the frame parameter of generate_template function."""
+
+    # Outer function with a local variable
+    def outer_function():
+        outer_var = "outer scope value"
+
+        # Inner function that needs to access outer_var
+        def inner_function():
+            inner_var = "inner scope value"
+
+            # Get the outer function's frame
+            outer_frame = inspect.currentframe().f_back
+
+            # Using current frame (default behavior)
+            template1 = generate_template("Inner: {inner_var}")
+
+            # Using explicit outer frame to access outer_var
+            template2 = generate_template("Outer: {outer_var}", frame=outer_frame)
+
+            # This would fail without the frame parameter
+            # since inner_function doesn't have access to outer_var
+            with pytest.raises(NameError):
+                template_fail = generate_template("Outer: {outer_var}")
+
+            return template1, template2
+
+        return inner_function()
+
+    # Call the outer function to run the test
+    template1, template2 = outer_function()
+
+    # Verify results
+    from tstr import f
+    assert f(template1) == "Inner: inner scope value"
+    assert f(template2) == "Outer: outer scope value"
+
+
+def test_frame_hierarchy():
+    """Test accessing variables from different levels of the call stack."""
+
+    def level1():
+        var1 = "level 1 variable"
+
+        def level2():
+            var2 = "level 2 variable"
+
+            def level3():
+                var3 = "level 3 variable"
+
+                # Get frames from different levels
+                current_frame = inspect.currentframe()
+                level2_frame = current_frame.f_back
+                level1_frame = level2_frame.f_back
+
+                # Access variables from different frames
+                template1 = generate_template("L1: {var1}", frame=level1_frame)
+                template2 = generate_template("L2: {var2}", frame=level2_frame)
+                template3 = generate_template("L3: {var3}")  # Uses current frame
+
+                return template1, template2, template3
+
+            return level3()
+
+        return level2()
+
+    # Run the nested functions
+    template1, template2, template3 = level1()
+
+    # Verify results
+    from tstr import f
+    assert f(template1) == "L1: level 1 variable"
+    assert f(template2) == "L2: level 2 variable"
+    assert f(template3) == "L3: level 3 variable"

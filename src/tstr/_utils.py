@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import types
 import typing
 from string import Formatter
 
@@ -337,6 +338,7 @@ def generate_template(
     *,
     globals: dict | None = None,
     use_eval: bool | None = None,
+    frame: types.FrameType | None = None,
 ) -> Template:
     """
     Constructs a Template object from a string and a context.
@@ -368,6 +370,10 @@ def generate_template(
             will be evaluated using Python's eval function. If False, expressions must be
             simple variable names in the context dictionary. Defaults to False if context
             or globals is provided, otherwise defaults to True.
+        frame (FrameType, optional): Explicitly specify which stack frame to use for retrieving
+            local and global variables when context or globals are not provided. By default,
+            uses the caller's frame.
+
 
     Returns:
         Template: A Template object constructed from the parsed string.
@@ -396,11 +402,11 @@ def generate_template(
         use_eval = context is None and globals is None
 
     if context is None or globals is None:
-        if (frame := inspect.currentframe()) and (parent_frame := frame.f_back):
+        if frame or (current_frame := inspect.currentframe()) and (frame := current_frame.f_back):
             if context is None:
-                context = parent_frame.f_locals
+                context = frame.f_locals
             if globals is None:
-                globals = parent_frame.f_globals
+                globals = frame.f_globals
         else:
             if context is None:
                 context = {}
