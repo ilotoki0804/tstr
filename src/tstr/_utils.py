@@ -420,12 +420,13 @@ def generate_template(
             try:
                 value = context[expr]
             except Exception:
-                try:
-                    value = f"{{{expr}}}".format_map(context)
-                except Exception:
-                    no_key = True
-                else:
-                    no_key = False
+                no_key = True
+                # try:
+                #     value = f"{{{expr}}}".format_map(context)
+                # except Exception:
+                #     no_key = True
+                # else:
+                #     no_key = False
             else:
                 no_key = False
             if no_key:
