@@ -8,6 +8,14 @@ from tstr import f, t
 from tstr._html import Attribute, render_html
 
 
+def test_render_html_invalid_type():
+    with pytest.raises(TypeError):
+        render_html(42)
+
+    with pytest.raises(TypeError):
+        render_html("Hello, World!")
+
+
 def test_render_html_escapes_html():
     username = "<script>alert('XSS')</script>"
     template = t("Hello, {username}!")

@@ -27,7 +27,7 @@ def execute(cursor: sqlite3.Cursor, sql: Template) -> sqlite3.Cursor:
         sqlite3.Cursor: The cursor after executing the SQL statement.
     """
     if not isinstance(sql, Template):
-        raise TypeError(f"Expected Template, got {type(template).__name__}")
+        raise TypeError(f"Expected Template, got {type(sql).__name__}")
 
     query = []
     params = []
