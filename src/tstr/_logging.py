@@ -66,8 +66,10 @@ def install(formatter: Renderer | None = None):
 def uninstall():
     global _resetter
     if _resetter is not None:
-        _resetter()
-        _resetter = None
+        try:
+            _resetter()
+        finally:
+            _resetter = None
 
 
 @contextmanager
