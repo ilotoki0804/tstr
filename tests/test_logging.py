@@ -1,6 +1,8 @@
 import io
 import logging
 
+import pytest
+
 from tstr import generate_template, render
 from tstr._logging import TemplateFormatter, install, logging_context, uninstall
 
@@ -24,13 +26,14 @@ def test_template_logging():
     logger.removeHandler(handler)
 
 
-def test_template_logging_with_execute_function_formatter():
+@pytest.mark.parametrize("renderer", [TemplateFormatter.execute_callable, TemplateFormatter().execute_callable])
+def test_template_logging_with_execute_function_formatter(renderer):
     logger = logging.getLogger("tstr.test")
     logger.setLevel(logging.INFO)
 
     stream = io.StringIO()
     handler = logging.StreamHandler(stream)
-    handler.setFormatter(TemplateFormatter(renderer=TemplateFormatter.execute_callable))
+    handler.setFormatter(TemplateFormatter(renderer=renderer))
     logger.addHandler(handler)
 
     def run():

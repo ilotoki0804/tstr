@@ -17,6 +17,7 @@ class TemplateFormatter(logging.Formatter):
     """
     default_renderer = staticmethod(render)
 
+    @staticmethod
     @binder
     def execute_callable(interp: Interpolation) -> str:
         value = interp.value() if callable(interp.value) else interp.value
