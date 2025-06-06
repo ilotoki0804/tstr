@@ -7,7 +7,6 @@ from ._template import (
 )
 from ._utils import (
     CONVERTERS,
-    TemplateGenerationError,
     bind,
     binder,
     convert,
@@ -35,7 +34,6 @@ __all__ = [
     "Conversion",
     "generate_template",
     "t",
-    "TemplateGenerationError",
     "TEMPLATE_STRING_SUPPORTED",
     "template_eq",
     "StringOrTemplate",

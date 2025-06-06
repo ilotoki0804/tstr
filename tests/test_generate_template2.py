@@ -8,7 +8,7 @@ from unittest.mock import patch
 from _support import TStringTestCase, fstring
 
 import tstr._compat as compat
-from tstr import generate_template, TemplateGenerationError
+from tstr import generate_template
 
 
 class TestTString(TStringTestCase):
@@ -42,16 +42,16 @@ class TestTString(TStringTestCase):
         with raises(NameError):
             generate_template("hello, {name} {world}")
 
-        with raises(TemplateGenerationError):
+        with raises(KeyError):
             generate_template("hello, {name} {world}", use_eval=False)
 
-        with raises(TemplateGenerationError):
+        with raises(KeyError):
             generate_template("hello, {name} {1 + 2}", use_eval=False)
 
-        with raises(TemplateGenerationError):
+        with raises(KeyError):
             generate_template("hello, {name + 1}", use_eval=False)
 
-        with raises(TemplateGenerationError):
+        with raises(KeyError):
             generate_template("hello, {name + 1}", use_eval=False)
 
         # def func():
@@ -66,7 +66,7 @@ class TestTString(TStringTestCase):
 
         # def func():
         #     return generate_template("hello, {name}", include_nonlocals=False, use_eval=False)
-        # with raises(TemplateGenerationError):
+        # with raises(KeyError):
         #     func()
 
         # def func():

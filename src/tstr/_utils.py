@@ -17,7 +17,6 @@ __all__ = [
     "normalize",
     "normalize_str",
     "generate_template",
-    "TemplateGenerationError",
     "template_eq",
     "interpolation_replace",
 ]
@@ -31,12 +30,6 @@ CONVERTERS = {
     "r": repr,
     "s": str,
 }
-
-
-class TemplateGenerationError(Exception):
-    """
-    Exception raised when a template cannot be generated.
-    """
 
 
 def convert(
@@ -353,7 +346,7 @@ def generate_template(
     evaluated using `eval()`.
 
     If either `context` or `globals` is provided, `use_eval` is set to False by default. This means that if the
-    interpolation contains anything other than a simple variable, a `TemplateGenerationError` will be raised.
+    interpolation contains anything other than a simple variable, a `KeyError` will be raised.
 
     You can freely change this default behavior by adjusting the value of `use_eval`.
 
@@ -379,7 +372,7 @@ def generate_template(
         Template: A Template object constructed from the parsed string.
 
     Raises:
-        TemplateGenerationError: If use_eval=False and a variable cannot be found in the context.
+        KeyError: If use_eval=False and a variable cannot be found in the context.
 
     Example:
         ```python
@@ -433,7 +426,7 @@ def generate_template(
                 if use_eval:
                     value = eval(expr, globals, context)
                 else:
-                    raise TemplateGenerationError(f"'{expr}' is not defined in context or is a complex expression.")
+                    raise KeyError(expr)
             parts.append(Interpolation(value, expr, conv, format_spec))  # type: ignore
     return Template(*parts)  # type: ignore
 
