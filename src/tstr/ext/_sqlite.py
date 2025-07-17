@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-import sqlite3
+import typing
 
 from tstr import Template, normalize
+
+if typing.TYPE_CHECKING:
+    import sqlite3
 
 __all__ = ["execute"]
 

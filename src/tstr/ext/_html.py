@@ -1,12 +1,15 @@
 from __future__ import annotations
+import typing
 
-from html import escape
-import json
+if typing.TYPE_CHECKING:
+    import json
+    from html import escape
+else:
+    json = escape = None
 
-from tstr import Interpolation, binder
-from tstr._utils import convert
+from tstr import Interpolation, binder, convert
 
-__all__ = ["render_html"]
+__all__ = ["render_html", "Attribute"]
 
 
 class Attribute(dict):
@@ -35,7 +38,7 @@ def render_html(interp: Interpolation) -> str:
 
     Examples:
         ```python
-        from tstr._html import render_html, Attribute
+        from tstr.ext import render_html, Attribute
 
         # Basic HTML escaping
         username = "<script>alert('XSS')</script>"
@@ -61,6 +64,11 @@ def render_html(interp: Interpolation) -> str:
         result = render_html(t"<img {Attribute(src="/image.jpg", alt="Profile picture", data_index=1)} />")
         ```
     """
+    global escape, json
+    if escape is None:
+        import json
+        from html import escape
+
     match interp.format_spec, convert(interp.value, interp.conversion):
         case "", str(value):
             return escape(value)

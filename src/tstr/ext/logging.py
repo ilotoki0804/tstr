@@ -4,8 +4,9 @@ import logging
 import typing
 from contextlib import contextmanager
 
-from ._template import Interpolation, Template
-from ._utils import binder, convert, render
+from tstr import Interpolation, Template, binder, convert, render
+
+__all__ = ["TemplateFormatter", "install", "logging_context", "uninstall"]
 
 _resetter = None
 Renderer = typing.Callable[[Template], str]
