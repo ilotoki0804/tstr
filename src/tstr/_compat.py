@@ -3,6 +3,8 @@ from __future__ import annotations
 import typing
 from itertools import zip_longest
 
+__all__ = ["Template", "Interpolation"]
+
 
 class Template:
     __strings: tuple[str, ...]

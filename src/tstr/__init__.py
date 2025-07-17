@@ -1,3 +1,10 @@
+from ._interpolation_tools import (
+    CONVERTERS,
+    convert,
+    interpolation_replace,
+    normalize,
+    normalize_str,
+)
 from ._template import (
     TEMPLATE_STRING_SUPPORTED,
     Conversion,
@@ -5,17 +12,13 @@ from ._template import (
     StringOrTemplate,
     Template,
 )
-from ._utils import (
-    CONVERTERS,
+from ._template_tools import (
     bind,
     binder,
-    convert,
     dedent,
     f,
     from_parts,
     generate_template,
-    interpolation_replace,
-    normalize,
     normalize_str,
     render,
     t,

@@ -13,8 +13,9 @@ from tstr import Interpolation, Template, generate_template
 
 
 class TestTemplate(TStringTestCase):
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_common(self):
         self.assertEqual(type(generate_template("")).__name__, "Template")
         self.assertEqual(type(generate_template("")).__qualname__, "Template")
@@ -28,8 +29,9 @@ class TestTemplate(TStringTestCase):
         self.assertEqual(type(i).__qualname__, "Interpolation")
         self.assertEqual(type(i).__module__, "tstr._compat")
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_basic_creation(self):
         # Simple t-string creation
         t = generate_template("Hello, world")
@@ -52,8 +54,9 @@ world""",
         self.assertEqual(len(t.interpolations), 0)
         self.assertEqual(fstring(t), "Hello,\nworld")
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_creation_interleaving(self):
         # Should add strings on either side
         t = Template(Interpolation("Maria", "name", None, ""))
@@ -85,8 +88,9 @@ world""",
         )
         self.assertEqual(fstring(t), "MariaPython")
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_template_values(self):
         t = generate_template("Hello, world")
         self.assertEqual(t.values, ())
@@ -100,8 +104,9 @@ world""",
         t = generate_template("Hello, {name}, {age} from {country}")
         self.assertEqual(t.values, ("Lys", 0, "GR"))
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_template_values_without_locals(self):
         t = generate_template("Hello, world")
         self.assertEqual(t.values, ())
@@ -115,8 +120,9 @@ world""",
         t = generate_template("Hello, {name}, {age} from {country}")
         self.assertEqual(t.values, ("Lys", 0, "GR"))
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_pickle_template(self):
         user = "test"
         for template in (
@@ -138,8 +144,9 @@ world""",
                     self.assertEqual(unpickled.values, template.values)
                     self.assertEqual(fstring(unpickled), fstring(template))
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_pickle_interpolation(self):
         for interpolation in (
             Interpolation("Nikita", "name", None, ""),

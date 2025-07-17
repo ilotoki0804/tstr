@@ -12,8 +12,9 @@ from tstr import generate_template
 
 
 class TestTString(TStringTestCase):
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_string_representation(self):
         # Test __repr__
         t = generate_template("Hello")
@@ -84,8 +85,9 @@ class TestTString(TStringTestCase):
         t_string_eq(t, ("hello, ", ""), [("world", "hello")])
 
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_interpolation_basics(self):
         # Test basic interpolation
         name = "Python"
@@ -143,8 +145,9 @@ class TestTString(TStringTestCase):
         )
         self.assertEqual(fstring(t), "Name: Bob, Age: 30")
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_format_specifiers(self):
         # Test basic format specifiers
         value = 3.14159
@@ -152,8 +155,9 @@ class TestTString(TStringTestCase):
         self.assertTStringEqual(t, ("Pi: ", ""), [(value, "value", None, ".2f")])
         self.assertEqual(fstring(t), "Pi: 3.14")
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_conversions(self):
         # Test !s conversion (str)
         obj = object()
@@ -208,16 +212,18 @@ class TestTString(TStringTestCase):
     #     )
     #     self.assertEqual(fstring(t), "Value: value = 42")
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_raw_tstrings(self):
         path = r"C:\Users"
         t = generate_template(r"{path}\Documents")
         self.assertTStringEqual(t, ("", r"\Documents"), [(path, "path")])
         self.assertEqual(fstring(t), r"C:\Users\Documents")
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_template_concatenation(self):
         # Test template + template
         t1 = generate_template("Hello, ")
@@ -245,8 +251,9 @@ class TestTString(TStringTestCase):
         self.assertTStringEqual(t, ("Hello, ", ""), [(name, "name")])
         self.assertEqual(fstring(t), "Hello, Python")
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_nested_templates(self):
         # Test a template inside another template expression
         name = "Python"
@@ -264,8 +271,9 @@ class TestTString(TStringTestCase):
         self.assertEqual(t_interp.conversion, None)
         self.assertEqual(t_interp.format_spec, "")
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_syntax_errors(self):
         x = 42
         for case, _ in (
@@ -298,15 +306,17 @@ class TestTString(TStringTestCase):
             with self.subTest(case), self.assertRaisesRegex((ValueError, SyntaxError), '.*'):
                 eval(case)
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_runtime_errors(self):
         # Test missing variables
         with self.assertRaises(NameError):
             eval("generate_template('Hello, {name}')")
 
-    @patch("tstr._utils.Template", compat.Template)
-    @patch("tstr._utils.Interpolation", compat.Interpolation)
+    @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
+    @patch("tstr._template_tools.Template", compat.Template)
+    @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_triple_quoted(self):
         # Test triple-quoted t-strings
         t = generate_template(
