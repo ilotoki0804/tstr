@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 import types
 import typing
+from itertools import zip_longest
 from string import Formatter
 
 from ._template import Conversion, Interpolation, Template
@@ -19,6 +20,8 @@ __all__ = [
     "generate_template",
     "template_eq",
     "interpolation_replace",
+    "from_parts",
+    "dedent",
 ]
 
 _formatter = Formatter()
@@ -432,3 +435,114 @@ def generate_template(
 
 
 t = generate_template
+
+
+def from_parts(strings: typing.Sequence[str], interpolations: typing.Sequence[Interpolation], strict=True) -> Template:
+    """
+    Constructs a Template object from component parts.
+
+    This function creates a Template by interleaving strings and interpolations
+    in alternating order. It's useful for reconstructing templates from their
+    component parts.
+
+    Args:
+        strings: A sequence of string literals that form the static parts of the template.
+        interpolations: A sequence of Interpolation objects that form the dynamic parts.
+        strict (bool, optional): If True, enforces that len(strings) == len(interpolations) + 1,
+            which is the standard structure for templates where strings separate interpolations.
+            If False, allows flexible input lengths. Defaults to True.
+
+    Returns:
+        Template: A Template object constructed from the provided strings and interpolations.
+
+    Raises:
+        ValueError: If strict=True and len(strings) != len(interpolations) + 1.
+    """
+    if strict and len(strings) != len(interpolations) + 1:
+        raise ValueError(
+            "The number of strings must be one more than the number of interpolations."
+        )
+    parts = []
+    for string, interpolation in zip_longest(strings, interpolations):
+        if string is not None:
+            parts.append(string)
+        if interpolation is not None:
+            parts.append(interpolation)
+    return Template(*parts)
+
+
+def dedent(template: Template) -> Template:
+    """
+    Removes common leading whitespace from all lines in a template.
+
+    This function is similar to textwrap.dedent() but works with Template objects,
+    preserving interpolations while removing the common indentation from string parts.
+    It analyzes all non-whitespace lines to determine the common leading whitespace
+    and removes it from each line.
+
+    The function handles template-specific considerations:
+    - Lines immediately following interpolations are treated specially
+    - Empty lines and whitespace-only lines are handled appropriately
+    - The relative indentation between lines is preserved
+
+    Args:
+        template (Template): The template to dedent.
+
+    Returns:
+        Template: A new Template with common leading whitespace removed.
+
+    Example:
+        ```python
+        name = "world"
+        template = generate_template('''    Hello {name}!
+            How are you?''')
+        dedented = dedent(template)
+        assert f(dedented) == "Hello world!\\n    How are you?"
+        ```
+    """
+    # import textwrap; textwrap.dedent("")
+    lines_list = [string.split("\n") for string in template.strings]
+    effective_lines = [
+        line
+        for i, lines in enumerate(lines_list)
+        for j, line in enumerate(lines)
+        if
+        # For better understanding, this evaluates cases where lines are 'excluded' and negates them
+        not (
+            # The first line of each lines group is excluded because it comes right after an interpolation.
+            # However, the first line of lines_list is not excluded since it doesn't follow an interpolation.
+            (j == 0 and i != 0)
+            or (
+                # Empty lines or lines consisting only of spaces are excluded
+                (not line or line.isspace())
+                # However, even if a line is empty or consists only of spaces,
+                # the last line of each lines group is not excluded because it comes right before an interpolation.
+                # However, the last line of lines_list is excluded since it doesn't precede an interpolation.
+                and (j + 1 != len(lines) or i + 1 == len(lines_list))
+            )
+        )
+    ]
+    # If line1 consists only of whitespace, margin might be evaluated as one less
+    # Therefore, add one more non-whitespace character at the end of the line
+    line1 = min(effective_lines, default="") + "\0"
+    line2 = max(effective_lines, default="") + "\0"
+    margin = 0
+    for margin, char in enumerate(line1):
+        if char != line2[margin] or char not in " \t":
+            break
+    strings = [
+        "\n".join(
+            line[margin:]
+            # Same logic as above
+            if not (
+                (j == 0 and i != 0)
+                or (not line or line.isspace())
+                and (j + 1 != len(lines) or i + 1 == len(lines_list))
+            )
+            # Clear all whitespace from whitespace-only lines, like textwrap.dedent()
+            else "" if line.isspace() else line
+            for j, line in enumerate(lines)
+        )
+        for i, lines in enumerate(lines_list)
+    ]
+    return from_parts(strings, template.interpolations)

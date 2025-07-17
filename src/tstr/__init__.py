@@ -10,14 +10,16 @@ from ._utils import (
     bind,
     binder,
     convert,
+    dedent,
     f,
+    from_parts,
     generate_template,
+    interpolation_replace,
     normalize,
     normalize_str,
     render,
     t,
     template_eq,
-    interpolation_replace,
 )
 
 __all__ = [
@@ -38,5 +40,7 @@ __all__ = [
     "template_eq",
     "StringOrTemplate",
     "interpolation_replace",
+    "from_parts",
+    "dedent",
 ]
 __version__ = "0.2.0"
