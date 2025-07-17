@@ -1,5 +1,4 @@
 from ._interpolation_tools import (
-    CONVERTERS,
     convert,
     interpolation_replace,
     normalize,
@@ -26,7 +25,6 @@ from ._template_tools import (
 )
 
 __all__ = [
-    "CONVERTERS",
     "bind",
     "binder",
     "f",

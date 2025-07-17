@@ -6,19 +6,12 @@ from ._template import Conversion, Interpolation
 
 __all__ = [
     "convert",
-    "CONVERTERS",
     "normalize",
     "normalize_str",
     "interpolation_replace",
 ]
 
 T = typing.TypeVar("T")
-
-CONVERTERS = {
-    "a": ascii,
-    "r": repr,
-    "s": str,
-}
 
 
 def convert(
@@ -36,7 +29,15 @@ def convert(
         T | str: The value converted according to the specified conversion;
             if 'conversion' is None, returns the original value unchanged.
     """
-    return CONVERTERS[conversion](value) if conversion else value
+    if conversion is None:
+        return value
+    if conversion == "s":
+        return str(value)
+    if conversion == "r":
+        return repr(value)
+    if conversion == "a":
+        return ascii(value)
+    raise ValueError(f"Invalid conversion: {conversion}")
 
 
 def normalize_str(interp: Interpolation) -> str:

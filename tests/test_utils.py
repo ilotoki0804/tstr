@@ -7,7 +7,6 @@ import inspect
 import pytest
 
 from tstr import (
-    CONVERTERS,
     Template,
     bind,
     binder,
@@ -24,25 +23,27 @@ from tstr import (
 )
 
 
-def test_converter_repr_conversion():
-    assert CONVERTERS["r"](42) == repr(42)
-
-
-def test_converter_str_conversion():
-    assert CONVERTERS["s"](42) == str(42)
-
-
-def test_converter_invalid_conversion():
-    with pytest.raises(KeyError):
-        CONVERTERS["invalid"]  # type: ignore
-
-
 def test_convert_no_conversion():
     assert convert(42, None) == 42
 
 
 def test_convert_with_conversion():
     assert convert(42, "s") == "42"
+
+
+def test_convert_repr_conversion():
+    assert convert(42, "r") == "42"
+    assert convert("text", "r") == "'text'"
+
+
+def test_convert_ascii_conversion():
+    assert convert(42, "a") == "42"
+    assert convert("text", "a") == "'text'"
+
+
+def test_convert_invalid_conversion():
+    with pytest.raises(ValueError, match="Invalid conversion: invalid"):
+        convert(42, "invalid")
 
 
 def test_normalize_str():
