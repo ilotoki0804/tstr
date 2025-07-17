@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from tstr import f, t
-from tstr._html import Attribute, render_html
+from tstr.ext import Attribute, render_html
 
 
 def test_render_html_invalid_type():

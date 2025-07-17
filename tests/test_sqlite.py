@@ -3,7 +3,7 @@ from __future__ import annotations
 import sqlite3
 from contextlib import closing
 
-from tstr._sqlite import execute
+from tstr.ext import execute
 from tstr import t
 
 
