@@ -23,80 +23,21 @@ pip install tstr
 - `render` (alias: `f`): Render a template to a string, mimicking f-string behavior.
 - `generate_template` (alias: `t`): Create a Template object from a string and context.
     This function is especially useful on Python versions that do not support template strings natively.
-- `bind`: Apply a function to all interpolations in a template.
+- `bind`: Apply a function to all interpolations and join all the parts.
 - `binder`: Decorator to create template processors from an interpolation processor.
 - `normalize` / `normalize_str`: Apply conversion and format to value.
 - `convert`: Apply conversion to a value.
 - `template_eq`: Check if two templates are equivalent.
 - `interpolation_replace`: Create a new `Interpolation` by selectively replacing attributes of an existing one.
 
-Experimental applications:
+This library also provides several useful extensions where template strings can be effectively utilized.
+These extensions are available in the `tstr.ext` submodule, and below is a list with brief descriptions:
 
-- `render_html`: Render templates with HTML escaping.
-- `execute`: Safely execute SQL with templates, preventing injection.
-- `TemplateFormatter`: Enable Python's logging module to accept template strings.
+- `ext.render_html`: Render templates with HTML escaping.
+- `ext.execute`: Safely execute SQL with templates, preventing SQL injection attacks.
+- `ext.logging`: Enable Python's logging module to accept template strings.
 
-Below are usage examples for each function. For more details, see the [API documentation](/docs/api.md).
-
-```python
-from tstr import Template, Interpolation, generate_template, render, bind, binder, f, normalize, normalize_str, convert, template_eq, interpolation_replace
-
-# Rendering templates
-x = 12
-template = t"Value: {x}"
-print(render(template))  # "Value: 12"
-print(f(template))  # "Value: 12"
-
-# Generating templates
-template = generate_template("Hello, {name}!", {"name": "Alice"})  # with explicit context
-print(f(template))  # "Hello, Alice!"
-
-name = "Bob"
-template = generate_template("Nice to meet you, {name}!")  # without explicit context
-print(f(template))  # "Nice to meet you, Bob!"
-
-template = t("Nice to meet you, {name}!")  # with an alias `t`
-print(f(template))  # "Nice to meet you, Bob!"
-
-# Binding all interpolations
-def double(i: Interpolation):
-    return str(i.value * 2)
-n = 10
-template = t"Double: {n}"
-print(bind(template, double))  # "Double: 20"
-
-@binder
-def upper(i):
-    return normalize_str(i).upper()
-name = "bob"
-template = t"Hi, {name}!"
-print(upper(template))  # "Hi, BOB!"
-
-# Applying conversion and formatting
-age = 20
-template = t"Age: {age:04d}"
-interp = template.interpolations[0]
-print(normalize(interp))  # "0020"
-
-# Applying conversion
-print(convert(42, "r"))  # e.g., "42"
-
-# Template equivalence
-x = 123
-t1 = t"A: {x}"
-t2 = t"A: {x}"
-print(template_eq(t1, t2))  # True
-
-# Interpolation replacement
-name = "world"
-template = t"Hello {name:>10}!"
-orig_interp = template.interpolations[0]
-
-# Replace just the value
-new_interp = interpolation_replace(orig_interp, value="universe")
-assert new_interp.value == "universe"
-assert new_interp.format_spec == ">10"
-```
+For more details, see the [API documentation](/docs/api.md).
 
 ## Compatibility
 
@@ -106,6 +47,8 @@ assert new_interp.format_spec == ">10"
 - Python 3.10–3.13: Uses a compatible backport.
 
 Use the `TEMPLATE_STRING_SUPPORTED` constant to check if template strings are natively supported in your Python version.
+
+For details on how the compatible backport of template string works and what similarities and differences it has with native template strings, see the [compatible template strings](docs/compat.md) documentation.
 
 # Contributing
 
@@ -118,4 +61,4 @@ This project welcomes contributions of all kinds from anyone willing to help imp
 
 ## License
 
-Apache License 2.0
+This library is licensed under the Apache License 2.0.
