@@ -13,7 +13,28 @@ Renderer = typing.Callable[[Template], str]
 
 class TemplateFormatter(logging.Formatter):
     """
-    A custom logging formatter that uses string templates for formatting log messages.
+    A logging formatter that supports template-based string formatting for log messages.
+
+    This formatter extends the standard logging.Formatter to handle Template objects
+    in log messages. When a log record's message is a Template object, it uses the
+    provided renderer (or the default_renderer) to convert the template into a string
+    before further formatting.
+
+    Attributes:
+        default_renderer (staticmethod): Default method to render Template objects.
+
+    Methods:
+        execute_callable: Processes an interpolation by executing callables, converting
+                         values, and applying format specifications.
+        format: Overrides the standard format method to handle Template objects.
+        shadow: Class method that replaces a handler's formatter with an instance of
+                this class while preserving the original formatter.
+
+    Args:
+        renderer (Renderer, optional): Function to render Template objects. If None,
+                                      default_renderer is used. Defaults to None.
+        fmt (str, optional): Format string for log messages. Defaults to None.
+        datefmt (str, optional): Format string for dates. Defaults to None.
     """
     default_renderer = staticmethod(render)
 
@@ -73,9 +94,9 @@ def uninstall():
 
 
 @contextmanager
-def logging_context(formatter: typing.Callable[[Template], str] = render):
+def logging_context(formatter: typing.Callable[[Template], str] | None = None):
     """
-    A context manager that temporarily installs a custom logging formatter.
+    A context manager that temporarily installs a template formatter.
     """
     install(formatter)
     try:
