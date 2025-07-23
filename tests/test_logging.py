@@ -4,7 +4,7 @@ import logging
 import pytest
 
 from tstr import generate_template, render
-from tstr.ext.logging import TemplateFormatter, install, logging_context, uninstall
+from tstr.ext.tlogging import TemplateFormatter, install, logging_context, uninstall
 
 
 def test_template_logging():
