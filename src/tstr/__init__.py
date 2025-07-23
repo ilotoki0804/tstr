@@ -16,7 +16,7 @@ from ._template_tools import (
     binder,
     dedent,
     f,
-    from_parts,
+    template_from_parts,
     generate_template,
     normalize_str,
     render,
@@ -41,7 +41,7 @@ __all__ = [
     "template_eq",
     "StringOrTemplate",
     "interpolation_replace",
-    "from_parts",
+    "template_from_parts",
     "dedent",
 ]
 __version__ = "0.2.0"

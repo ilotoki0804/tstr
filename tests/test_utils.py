@@ -13,7 +13,7 @@ from tstr import (
     convert,
     dedent,
     f,
-    from_parts,
+    template_from_parts,
     generate_template,
     interpolation_replace,
     normalize,
@@ -310,7 +310,7 @@ def test_from_parts_basic():
     strings = ["Hello ", "!"]
     interpolations = [Interpolation("world", "name", None, "")]
 
-    template = from_parts(strings, interpolations)
+    template = template_from_parts(strings, interpolations)
 
     assert len(template.strings) == 2
     assert template.strings[0] == "Hello "
@@ -327,7 +327,7 @@ def test_from_parts_empty_strings():
     strings = ["", ""]
     interpolations = [Interpolation("test", "test", None, "")]
 
-    template = from_parts(strings, interpolations)
+    template = template_from_parts(strings, interpolations)
 
     assert isinstance(template.strings, tuple)
     assert len(template.strings) == 2
@@ -342,7 +342,7 @@ def test_from_parts_no_interpolations():
     strings = ["Hello world!"]
     interpolations = []
 
-    template = from_parts(strings, interpolations)
+    template = template_from_parts(strings, interpolations)
 
     # When no interpolations, only one string should be used
     assert len(template.strings) == 1
@@ -361,7 +361,7 @@ def test_from_parts_multiple_interpolations():
         Interpolation(25, "age", None, "")
     ]
 
-    template = from_parts(strings, interpolations)
+    template = template_from_parts(strings, interpolations)
 
     assert len(template.strings) == 3
     assert len(template.interpolations) == 2
@@ -376,7 +376,7 @@ def test_from_parts_uneven_lengths():
     strings = ["Start ", " middle ", " end"]
     interpolations = [Interpolation("X", "x", None, "")]
 
-    template = from_parts(strings, interpolations, strict=False)
+    template = template_from_parts(strings, interpolations, strict=False)
 
     # The function concatenates remaining strings after all interpolations are consumed
     assert len(template.strings) == 2
@@ -392,7 +392,7 @@ def test_from_parts_uneven_lengths():
         Interpolation("B", "b", None, "")
     ]
 
-    template = from_parts(strings, interpolations, strict=False)
+    template = template_from_parts(strings, interpolations, strict=False)
 
     # When there are more interpolations than strings, empty strings are added
     assert len(template.strings) == 3
@@ -691,7 +691,7 @@ def test_from_parts_strict_true_valid():
     interpolations = [Interpolation("world", "name", None, "")]
 
     # This should work since len(strings) == len(interpolations) + 1
-    template = from_parts(strings, interpolations, strict=True)
+    template = template_from_parts(strings, interpolations, strict=True)
 
     assert len(template.strings) == 2
     assert len(template.interpolations) == 1
@@ -707,7 +707,7 @@ def test_from_parts_strict_true_too_many_strings():
 
     # This should raise ValueError since len(strings) != len(interpolations) + 1
     with pytest.raises(ValueError, match="The number of strings must be one more than the number of interpolations"):
-        from_parts(strings, interpolations, strict=True)
+        template_from_parts(strings, interpolations, strict=True)
 
 
 def test_from_parts_strict_true_too_few_strings():
@@ -722,7 +722,7 @@ def test_from_parts_strict_true_too_few_strings():
 
     # This should raise ValueError since len(strings) != len(interpolations) + 1
     with pytest.raises(ValueError, match="The number of strings must be one more than the number of interpolations"):
-        from_parts(strings, interpolations, strict=True)
+        template_from_parts(strings, interpolations, strict=True)
 
 
 def test_from_parts_strict_true_empty_cases():
@@ -732,13 +732,13 @@ def test_from_parts_strict_true_empty_cases():
     # Empty interpolations should work with one string
     strings = ["Hello world"]
     interpolations = []
-    template = from_parts(strings, interpolations, strict=True)
+    template = template_from_parts(strings, interpolations, strict=True)
     assert f(template) == "Hello world"
 
     # Empty strings and interpolations should work
     strings = [""]
     interpolations = []
-    template = from_parts(strings, interpolations, strict=True)
+    template = template_from_parts(strings, interpolations, strict=True)
     assert f(template) == ""
 
 
@@ -749,7 +749,7 @@ def test_from_parts_strict_false_flexible():
     # Too many strings - should work with strict=False
     strings = ["Start ", " middle ", " end"]
     interpolations = [Interpolation("X", "x", None, "")]
-    template = from_parts(strings, interpolations, strict=False)
+    template = template_from_parts(strings, interpolations, strict=False)
     assert f(template) == "Start X middle  end"
 
     # Too few strings - should work with strict=False
@@ -758,7 +758,7 @@ def test_from_parts_strict_false_flexible():
         Interpolation("A", "a", None, ""),
         Interpolation("B", "b", None, "")
     ]
-    template = from_parts(strings, interpolations, strict=False)
+    template = template_from_parts(strings, interpolations, strict=False)
     assert f(template) == "Begin AB"
 
 
@@ -771,7 +771,7 @@ def test_from_parts_strict_default_behavior():
 
     # Default behavior should be strict=True
     with pytest.raises(ValueError, match="The number of strings must be one more than the number of interpolations"):
-        from_parts(strings, interpolations)
+        template_from_parts(strings, interpolations)
 
 
 def test_from_parts_strict_complex_interpolations():
@@ -784,7 +784,7 @@ def test_from_parts_strict_complex_interpolations():
         Interpolation("OK", "status", None, "^8")
     ]
 
-    template = from_parts(strings, interpolations, strict=True)
+    template = template_from_parts(strings, interpolations, strict=True)
 
     assert len(template.strings) == 3
     assert len(template.interpolations) == 2
@@ -810,10 +810,10 @@ def test_from_parts_strict_parameter_validation():
         interpolations = [Interpolation(i, f"var{i}", None, "") for i in range(num_interps)]
 
         # Should work with strict=True
-        template = from_parts(strings, interpolations, strict=True)
+        template = template_from_parts(strings, interpolations, strict=True)
         assert len(template.strings) == num_interps + 1
         assert len(template.interpolations) == num_interps
 
         # Should also work with strict=False
-        template = from_parts(strings, interpolations, strict=False)
+        template = template_from_parts(strings, interpolations, strict=False)
         assert len(template.interpolations) == num_interps

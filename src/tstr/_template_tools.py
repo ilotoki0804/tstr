@@ -16,7 +16,7 @@ __all__ = [
     "render",
     "generate_template",
     "template_eq",
-    "from_parts",
+    "template_from_parts",
     "dedent",
 ]
 
@@ -305,7 +305,7 @@ def generate_template(
 t = generate_template
 
 
-def from_parts(strings: typing.Sequence[str], interpolations: typing.Sequence[Interpolation], strict=True) -> Template:
+def template_from_parts(strings: typing.Sequence[str], interpolations: typing.Sequence[Interpolation], strict=True) -> Template:
     """
     Constructs a Template object from component parts.
 
@@ -420,4 +420,4 @@ def dedent(template: Template) -> Template:
         )
         for i, lines in enumerate(lines_list)
     ]
-    return from_parts(strings, template.interpolations)
+    return template_from_parts(strings, template.interpolations)
