@@ -69,6 +69,14 @@ def bind(template: Template, binder, *, joiner="".join) -> typing.Any:
     return joiner(_bind_iterator(template, binder))
 
 
+def _bind_iterator(template: Template, binder):
+    for item in template:
+        if isinstance(item, str):
+            yield item
+        else:
+            yield binder(item)
+
+
 @typing.overload
 def binder(
     binder: typing.Callable[[Interpolation], str],
@@ -118,16 +126,20 @@ def binder(binder, joiner="".join) -> typing.Any:
     return lambda template: bind(template, binder, joiner=joiner)
 
 
-f = render = binder(normalize_str)
-"""
-Renders a template as a string, just like f-strings.
+def render(template: Template) -> str:
+    """
+    Renders a template as a string, just like f-strings (alias: f).
 
-Args:
-    template (Template): The template to render.
+    Args:
+        template (Template): The template to render.
 
-Returns:
-    str: The rendered string.
-"""
+    Returns:
+        str: The rendered string.
+    """
+    return bind(template, normalize_str)
+
+
+f = render
 
 
 def template_eq(
@@ -183,14 +195,6 @@ def template_eq(
     return True
 
 
-def _bind_iterator(template: Template, binder):
-    for item in template:
-        if isinstance(item, str):
-            yield item
-        else:
-            yield binder(item)
-
-
 def generate_template(
     string: typing.LiteralString | str,  # LiteralString is ineffective for static type checking here
     context: typing.Mapping[str, object] | None = None,
@@ -213,6 +217,7 @@ def generate_template(
 
     If either `context` or `globals` is provided, `use_eval` is set to False by default. This means that if the
     interpolation contains anything other than a simple variable, a `KeyError` will be raised.
+    The reason `KeyError` is raised is because `str.format()` also raises the same error.
 
     You can freely change this default behavior by adjusting the value of `use_eval`.
 
@@ -293,8 +298,8 @@ def generate_template(
                     value = eval(expr, globals, context)
                 else:
                     raise KeyError(expr)
-            parts.append(Interpolation(value, expr, conv, format_spec))  # type: ignore
-    return Template(*parts)  # type: ignore
+            parts.append(Interpolation(value, expr, conv, format_spec or ""))  # type: ignore
+    return Template(*parts)
 
 
 t = generate_template
@@ -311,15 +316,22 @@ def from_parts(strings: typing.Sequence[str], interpolations: typing.Sequence[In
     Args:
         strings: A sequence of string literals that form the static parts of the template.
         interpolations: A sequence of Interpolation objects that form the dynamic parts.
-        strict (bool, optional): If True, enforces that len(strings) == len(interpolations) + 1,
-            which is the standard structure for templates where strings separate interpolations.
-            If False, allows flexible input lengths. Defaults to True.
+        strict (bool, optional): Controls validation of input length relationships.
+            If True (default), enforces that the number of strings must be exactly one more
+            than the number of interpolations.
+            This ensures the standard template structure where strings and interpolations
+            alternate, starting and ending with a string. This is the expected format
+            for most template operations.
+            If False, allows flexible input lengths where extra strings or interpolations
+            are handled gracefully, useful for dynamic template construction scenarios.
+            Defaults to True.
 
     Returns:
         Template: A Template object constructed from the provided strings and interpolations.
 
     Raises:
-        ValueError: If strict=True and len(strings) != len(interpolations) + 1.
+        ValueError: If strict=True and the number of strings is not exactly one more than
+            the number of interpolations.
     """
     if strict and len(strings) != len(interpolations) + 1:
         raise ValueError(

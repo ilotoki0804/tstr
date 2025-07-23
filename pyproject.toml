@@ -10,6 +10,12 @@ keywords = [
     "string",
     "utility",
     "backport",
+    "template string",
+    "t-string",
+    "tstring",
+    "pep-750",
+    "pep750",
+    "pep 750",
 ]
 dependencies = []
 classifiers = [

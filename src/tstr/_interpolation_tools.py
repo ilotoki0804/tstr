@@ -40,24 +40,6 @@ def convert(
     raise ValueError(f"Invalid conversion: {conversion}")
 
 
-def normalize_str(interp: Interpolation) -> str:
-    """
-    Normalizes a PEP 750 Interpolation to a formatted string.
-
-    This processes an Interpolation object similarly to how f-strings process
-    interpolated expressions: it applies conversion and format specification.
-    Unlike normalize(), this always returns a string.
-
-    Args:
-        interp (Interpolation): The interpolation to normalize.
-
-    Returns:
-        str: The formatted string representation of the interpolation.
-    """
-    converted = convert(interp.value, interp.conversion)
-    return format(converted, interp.format_spec)
-
-
 def normalize(interp: Interpolation) -> str | object:
     """
     Normalizes a PEP 750 Interpolation, preserving its type when possible.
@@ -79,6 +61,24 @@ def normalize(interp: Interpolation) -> str | object:
         return normalize_str(interp)
     else:
         return interp.value
+
+
+def normalize_str(interp: Interpolation) -> str:
+    """
+    Normalizes a PEP 750 Interpolation to a formatted string.
+
+    This processes an Interpolation object similarly to how f-strings process
+    interpolated expressions: it applies conversion and format specification.
+    Unlike normalize(), this always returns a string.
+
+    Args:
+        interp (Interpolation): The interpolation to normalize.
+
+    Returns:
+        str: The formatted string representation of the interpolation.
+    """
+    converted = convert(interp.value, interp.conversion)
+    return format(converted, interp.format_spec)
 
 
 _NOTSET = object()
@@ -108,39 +108,6 @@ def interpolation_replace(
 
     Returns:
         Interpolation: A new Interpolation with the specified replacements.
-
-    Example:
-        ```python
-        name = "world"
-        template = t"Hello {name:>10}!"
-        orig_interp = template.interpolations[0]
-
-        # Replace just the value
-        new_interp = interpolation_replace(orig_interp, value="universe")
-        assert new_interp.value == "universe"
-        assert new_interp.expression == orig_interp.expression
-        assert new_interp.format_spec == ">10"
-
-        # Replace the format specification
-        new_interp = interpolation_replace(orig_interp, format_spec="^20")
-        assert new_interp.value == "world"
-        assert new_interp.format_spec == "^20"
-
-        # Replace the conversion
-        new_interp = interpolation_replace(orig_interp, conversion="r")
-        assert new_interp.conversion == "r"
-        assert f(Template("", new_interp)) == "   'world'"
-
-        # Replace multiple attributes
-        new_interp = interpolation_replace(
-            orig_interp,
-            value=123,
-            format_spec=".2f",
-        )
-        assert new_interp.value == 123
-        assert new_interp.format_spec == ".2f"
-        assert f(Template("", new_interp)) == "123.00"
-        ```
     """
     value = interp.value if value is _NOTSET else value
     expression = interp.expression if expression is _NOTSET else expression

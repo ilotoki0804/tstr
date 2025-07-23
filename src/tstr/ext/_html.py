@@ -76,7 +76,7 @@ def render_html(interp: Interpolation) -> str:
             return value
         case "json", value:
             return json.dumps(value)
-        case ("", Attribute() as value) | ("attrs" | "attr", value):
+        case (_, Attribute() as value) | ("attrs" | "attr", value):
             return " ".join(
                 f'{attr.replace("_", "-")}="{escape(value)}"'
                 for attr, value in value.items()  # type: ignore
