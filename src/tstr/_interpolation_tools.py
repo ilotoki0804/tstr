@@ -14,9 +14,34 @@ __all__ = [
 T = typing.TypeVar("T")
 
 
+@typing.overload
+def convert(
+    value: typing.Any,
+    conversion: Conversion,
+) -> str: ...
+
+@typing.overload
+def convert(
+    value: typing.Any,
+    conversion: str,
+) -> str: ...
+
+@typing.overload
 def convert(
     value: T,
     conversion: Conversion | None,
+) -> T | str: ...
+
+@typing.overload
+def convert(
+    value: T,
+    conversion: str | None,
+) -> T | str: ...
+
+
+def convert(
+    value: T,
+    conversion: str | None,
 ) -> T | str:
     """
     Applies a conversion to a value, similar to how f-strings handle conversions.
