@@ -7,13 +7,12 @@ import pickle
 import unittest
 from unittest.mock import patch
 from collections.abc import Iterator, Iterable
-from string.templatelib import Template, Interpolation
 
 import pytest
 
 from _support import TStringTestCase, fstring
 import tstr._compat as compat
-from tstr import Interpolation, Template, generate_template, convert, t
+from tstr import Interpolation, Template, Interpolation, generate_template, convert, t
 
 
 class TestTemplate(TStringTestCase):
