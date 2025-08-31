@@ -3,15 +3,16 @@
 
 from __future__ import annotations
 
+import unittest
 from unittest.mock import patch
 
-from _support import TStringTestCase, fstring
+from test.test_string._support import TStringBaseCase
 
 import tstr._compat as compat
-from tstr import generate_template
+from tstr import generate_template, f as fstring, t
 
 
-class TestTString(TStringTestCase):
+class TestTString(unittest.TestCase, TStringBaseCase):
     @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
     @patch("tstr._template_tools.Template", compat.Template)
     @patch("tstr._template_tools.Interpolation", compat.Interpolation)
@@ -83,7 +84,6 @@ class TestTString(TStringTestCase):
 
         t = generate_template("hello, {hello}", dict(hello="world"), use_eval=False)
         t_string_eq(t, ("hello, ", ""), [("world", "hello")])
-
 
     @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
     @patch("tstr._template_tools.Template", compat.Template)
@@ -226,30 +226,32 @@ class TestTString(TStringTestCase):
     @patch("tstr._template_tools.Interpolation", compat.Interpolation)
     def test_template_concatenation(self):
         # Test template + template
-        t1 = generate_template("Hello, ")
-        t2 = generate_template("world")
+        t1 = t("Hello, ")
+        t2 = t("world")
         combined = t1 + t2
         self.assertTStringEqual(combined, ("Hello, world",), ())
         self.assertEqual(fstring(combined), "Hello, world")
 
         # Test template + string
-        t1 = generate_template("Hello")
-        combined = t1 + ", world"
-        self.assertTStringEqual(combined, ("Hello, world",), ())
-        self.assertEqual(fstring(combined), "Hello, world")
+        t1 = t("Hello")
+        expected_msg = 'can only concatenate tstr.Template ' \
+            '\\(not "str"\\) to tstr.Template'
+        with self.assertRaisesRegex(TypeError, expected_msg):
+            t1 + ", world"
 
         # Test template + template with interpolation
         name = "Python"
-        t1 = generate_template("Hello, ")
-        t2 = generate_template("{name}")
+        t1 = t("Hello, ")
+        t2 = t("{name}")
         combined = t1 + t2
         self.assertTStringEqual(combined, ("Hello, ", ""), [(name, "name")])
         self.assertEqual(fstring(combined), "Hello, Python")
 
         # Test string + template
-        t = "Hello, " + generate_template("{name}")
-        self.assertTStringEqual(t, ("Hello, ", ""), [(name, "name")])
-        self.assertEqual(fstring(t), "Hello, Python")
+        expected_msg = 'can only concatenate str ' \
+            '\\(not "tstr.Template"\\) to str'
+        with self.assertRaisesRegex(TypeError, expected_msg):
+            "Hello, " + t("{name}")
 
     @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
     @patch("tstr._template_tools.Template", compat.Template)

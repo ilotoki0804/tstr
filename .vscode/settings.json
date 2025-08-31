@@ -2,6 +2,7 @@
     "cSpell.words": [
         "dedented",
         "fetchone",
+        "fstring",
         "interp",
         "intp",
         "intrp",
@@ -9,7 +10,9 @@
         "renderable",
         "repr",
         "templatelib",
-        "tstr"
+        "tstr",
+        "tstring",
+        "tstrings"
     ],
     "python.analysis.typeCheckingMode": "standard"
 }

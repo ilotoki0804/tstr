@@ -6,6 +6,7 @@ from itertools import zip_longest
 __all__ = ["Template", "Interpolation"]
 
 
+@typing.final
 class Template:
     __strings: tuple[str, ...]
     __interpolations: tuple[Interpolation, ...]
@@ -82,7 +83,8 @@ class Template:
 
     def __add__(self, other: str | Template) -> Template:
         if isinstance(other, str):
-            return Template(*self, other)
+            raise TypeError(
+                'can only concatenate tstr.Template (not "str") to tstr.Template')
         elif isinstance(other, Template):
             return Template(*self, *other)
         else:
@@ -90,7 +92,8 @@ class Template:
 
     def __radd__(self, other: str | Template) -> Template:
         if isinstance(other, str):
-            return Template(other, *self)
+            raise TypeError(
+                'can only concatenate str (not "tstr.Template") to str')
         elif isinstance(other, Template):
             return Template(*other, *self)
         else:
@@ -100,6 +103,7 @@ class Template:
         return f"Template(strings={self.strings!r}, interpolations={self.interpolations!r})"
 
 
+@typing.final
 class Interpolation:
     __match_args__ = ("value", "expression", "conversion", "format_spec")
     __value: object
