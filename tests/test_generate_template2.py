@@ -3,16 +3,14 @@
 
 from __future__ import annotations
 
-import unittest
 from unittest.mock import patch
 
-from test.test_string._support import TStringBaseCase
-
+from _support import TStringTestCase
 import tstr._compat as compat
 from tstr import generate_template, f as fstring, t
 
 
-class TestTString(unittest.TestCase, TStringBaseCase):
+class TestTString(TStringTestCase):
     @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
     @patch("tstr._template_tools.Template", compat.Template)
     @patch("tstr._template_tools.Interpolation", compat.Interpolation)

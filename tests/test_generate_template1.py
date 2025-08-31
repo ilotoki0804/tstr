@@ -10,13 +10,13 @@ from collections.abc import Iterator, Iterable
 from string.templatelib import Template, Interpolation
 
 import pytest
-from test.test_string._support import TStringBaseCase, fstring
 
+from _support import TStringTestCase, fstring
 import tstr._compat as compat
 from tstr import Interpolation, Template, generate_template, convert, t
 
 
-class TestTemplate(unittest.TestCase, TStringBaseCase):
+class TestTemplate(TStringTestCase):
     @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
     @patch("tstr._template_tools.Template", compat.Template)
     @patch("tstr._template_tools.Interpolation", compat.Interpolation)
