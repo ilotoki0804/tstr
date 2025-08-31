@@ -70,6 +70,9 @@ class TemplateFormatter(logging.Formatter):
 
 
 def install(formatter: Renderer | None = None):
+    """
+    Install template formatter at global logger. This function is idempotent.
+    """
     global _resetter
     if _resetter is None:
         logging.basicConfig()
@@ -86,6 +89,9 @@ def install(formatter: Renderer | None = None):
 
 
 def uninstall():
+    """
+    Remove template formatter at global logger if exists. This function is idempotent.
+    """
     global _resetter
     if _resetter is not None:
         try:

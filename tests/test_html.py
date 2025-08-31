@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from tstr import f, t
-from tstr.ext import Attribute, render_html
+from tstr import t
+from tstr.ext._html import Attribute, render_html
 
 
 def test_render_html_invalid_type():
@@ -43,6 +43,7 @@ def test_render_html_attrs():
 
 
 def test_render_html_attrs_with_class():
+    _ = Attribute()  # to inform linters that Attribute() is used.
     template = t('<img {Attribute(src="/image.jpg", alt="Profile picture", data_index="1")} />')
     result = render_html(template)
     assert result == '<img src="/image.jpg" alt="Profile picture" data-index="1" />'

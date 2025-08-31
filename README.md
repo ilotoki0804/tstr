@@ -33,9 +33,9 @@ pip install tstr
 This library also provides several useful extensions where template strings can be effectively utilized.
 These extensions are available in the `tstr.ext` submodule, and below is a list with brief descriptions:
 
-- `ext.render_html`: Render templates with HTML escaping.
-- `ext.execute`: Safely execute SQL with templates, preventing SQL injection attacks.
-- `ext.logging`: Enable Python's logging module to accept template strings.
+- `ext._html`: Render templates with HTML escaping.
+- `ext._sqlite`: Safely execute SQL with templates, preventing SQL injection attacks.
+- `ext._logging`: Enable Python's logging module to accept template strings.
 
 For more details, see the [API documentation](/docs/api.md).
 
