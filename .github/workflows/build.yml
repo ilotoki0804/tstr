@@ -1,61 +1,58 @@
-name: Build PyPI Package
+# The following build script copied from hatch/.github/workflows/build-hatchling.yml (MIT License)
+name: build a package
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+    - v*
+
+env:
+  PYTHON_VERSION: "3.12"
 
 jobs:
-  release-package:
+  build:
+    name: Build wheels and source distribution
     runs-on: ubuntu-latest
-    if: startsWith(github.event.head_commit.message, 'release')
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Setup Python
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v5
       with:
-        python-version: '3.13'
+        python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: install dependencies
-      run: |
-        pip install -e . hatch
+    - name: Install UV
+      uses: astral-sh/setup-uv@v3
 
-    - name: build and publish package
-      run: |
-        hatch build
-        hatch publish -u __token__ -a "${{ secrets.PYPI_TOKEN }}"
+    - name: Install build dependencies
+      run: uv pip install --system --upgrade build
+
+    - name: Build source distribution
+      run: python -m build .
 
     - uses: actions/upload-artifact@v4
       with:
-        name: upload build
-        path: dist/*
+        name: artifacts
+        path: dist
+        if-no-files-found: error
 
-  build-package:
+  publish:
+    name: Publish release
+    needs:
+    - build
     runs-on: ubuntu-latest
-    if: startsWith(github.event.head_commit.message, 'build')
+
+    permissions:
+      id-token: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-  
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-  
-      - name: install dependencies
-        run: |
-          pip install -e . hatch
+    - uses: actions/download-artifact@v4
+      with:
+        name: artifacts
+        path: dist
 
-      - name: build and publish package
-        run: |
-          hatch build
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: upload build
-          path: dist/*
+    - name: Push build artifacts to PyPI
+      uses: pypa/gh-action-pypi-publish@v1.12.3
+      with:
+        skip-existing: true
