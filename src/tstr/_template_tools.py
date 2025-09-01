@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 import types
 import typing
-from itertools import zip_longest
+from itertools import zip_longest  # type: ignore # I have no idea why this line cause errors in Pyright, but it's probably fine.
 from string import Formatter
 
 from ._interpolation_tools import normalize_str
