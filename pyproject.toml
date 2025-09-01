@@ -53,6 +53,19 @@ ignore = ["E501", "E402", "S101", "UP038"]
 [tool.hatch.version]
 path = "src/tstr/__init__.py"
 
+[tool.coverage.report]
+exclude_also = [
+    "unreachable",
+    "case other:",
+    "assert False",
+    "if (typing\\.)?TYPE_CHECKING:",
+    "@(typing\\.)?deprecated",
+    "@overload",
+    "@pytest.mark.skip",
+    "@mark.skip",
+    'if __name__ == "__main__":'
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/tstr"]
 
