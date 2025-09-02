@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import re
 import types
 import typing
 from itertools import zip_longest  # type: ignore # I have no idea why this line cause errors in Pyright, but it's probably fine.
@@ -21,6 +22,7 @@ __all__ = [
 ]
 
 _formatter = Formatter()
+debug_spec = re.compile("^(.*?) *=( *)$")
 T = typing.TypeVar("T")
 U = typing.TypeVar("U")
 
@@ -281,6 +283,13 @@ def generate_template(
     for literal, expr, format_spec, conv in _formatter.parse(string):
         parts.append(literal)
         if expr is not None:
+            # resolve debug specifier
+            if matched := debug_spec.match(expr):
+                parts.append(expr)
+                expr = matched[1]
+                if not format_spec and not conv:
+                    conv = "r"
+
             try:
                 value = context[expr]
             except Exception:

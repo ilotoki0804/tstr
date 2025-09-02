@@ -180,35 +180,34 @@ class TestTString(TStringTestCase):
         with self.assertRaises(ValueError):
             eval("generate_template('{num!z}')")
 
-    # debug specifier is not supported in generate_template
-    # def test_debug_specifier(self):
-    #     # Test debug specifier
-    #     value = 42
-    #     t = generate_template("Value: {value=}")
-    #     self.assertTStringEqual(
-    #         t, ("Value: value=", ""), [(value, "value", "r")]
-    #     )
-    #     self.assertEqual(fstring(t), "Value: value=42")
+    def test_debug_specifier(self):
+        # Test debug specifier
+        value = 42
+        t = generate_template("Value: {value=}")
+        self.assertTStringEqual(
+            t, ("Value: value=", ""), [(value, "value", "r")]
+        )
+        self.assertEqual(fstring(t), "Value: value=42")
 
-    #     # Test debug specifier with format (conversion default to !r)
-    #     t = generate_template("Value: {value=:.2f}")
-    #     self.assertTStringEqual(
-    #         t, ("Value: value=", ""), [(value, "value", None, ".2f")]
-    #     )
-    #     self.assertEqual(fstring(t), "Value: value=42.00")
+        # Test debug specifier with format (conversion default to !r)
+        t = generate_template("Value: {value=:.2f}")
+        self.assertTStringEqual(
+            t, ("Value: value=", ""), [(value, "value", None, ".2f")]
+        )
+        self.assertEqual(fstring(t), "Value: value=42.00")
 
-    #     # Test debug specifier with conversion
-    #     t = generate_template("Value: {value=!s}")
-    #     self.assertTStringEqual(
-    #         t, ("Value: value=", ""), [(value, "value", "s")]
-    #     )
+        # Test debug specifier with conversion
+        t = generate_template("Value: {value=!s}")
+        self.assertTStringEqual(
+            t, ("Value: value=", ""), [(value, "value", "s")]
+        )
 
-    #     # Test white space in debug specifier
-    #     t = generate_template("Value: {value = }")
-    #     self.assertTStringEqual(
-    #         t, ("Value: value = ", ""), [(value, "value", "r")]
-    #     )
-    #     self.assertEqual(fstring(t), "Value: value = 42")
+        # Test white space in debug specifier
+        t = generate_template("Value: {value = }")
+        self.assertTStringEqual(
+            t, ("Value: value = ", ""), [(value, "value", "r")]
+        )
+        self.assertEqual(fstring(t), "Value: value = 42")
 
     @patch("tstr._interpolation_tools.Interpolation", compat.Interpolation)
     @patch("tstr._template_tools.Template", compat.Template)
