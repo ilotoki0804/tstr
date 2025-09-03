@@ -29,8 +29,8 @@ pip install tstr
 - `convert`: Apply conversion to a value.
 - `template_eq`: Check if two templates are equivalent.
 - `interpolation_replace`: Create a new `Interpolation` by selectively replacing attributes of an existing one.
-- `dedent`: `textwrap.dedent` for template strings
-- `template_from_parts`: Construct template strings from iterable
+- `dedent`: `textwrap.dedent` for template strings.
+- `template_from_parts`: Construct template strings from iterable.
 
 This library also provides several useful extensions where template strings can be effectively utilized.
 These extensions are available in the `tstr.ext` submodule, and below is a list with brief descriptions:
@@ -39,7 +39,7 @@ These extensions are available in the `tstr.ext` submodule, and below is a list 
 - `ext._sqlite`: Safely execute SQL with templates, preventing SQL injection attacks.
 - `ext._logging`: Enable Python's logging module to accept template strings.
 
-For more details, see the [API documentation](/docs/api.md).
+For more details, see the [API documentation (coming soon)](/docs/api.md) or docstrings.
 
 ## Compatibility
 
