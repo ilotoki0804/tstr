@@ -50,7 +50,7 @@ For more details, see the [API documentation (coming soon)](/docs/api.md) or doc
 
 Use the `TEMPLATE_STRING_SUPPORTED` constant to check if template strings are natively supported in your Python version.
 
-For details on how the compatible backport of template string works and what similarities and differences it has with native template strings, see the [compatible template strings](/docs/compat.md) documentation.
+For details on how the compatible backport of template string works and what similarities and differences it has with native template strings, see the [compatible template strings (coming soon)](/docs/compat.md) documentation.
 
 # Contributing
 
@@ -58,6 +58,7 @@ This project welcomes contributions of all kinds from anyone willing to help imp
 
 ## Releases
 
+* 0.4.0: Support debug specifier on `t()`, use new build script, improve docs
 * 0.3.0: Revamp various things
 * 0.2.0: Rename html_render to render_html, add `_logging` module, fix various bugs and improve documentation
 * 0.1.1.post1: Initial release
