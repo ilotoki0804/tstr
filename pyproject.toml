@@ -1,6 +1,7 @@
 [project]
 name = "tstr"
 description = "Template string utilities and backports"
+version = "0.4.0.post1"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "ilotoki0804", email = "ilotoki0804@gmail.com" }]
@@ -32,7 +33,6 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-dynamic = ["version"]
 
 [dependency-groups]
 dev = [
@@ -48,10 +48,7 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "UP", "W"]
-ignore = ["E501", "E402", "S101", "UP038"]
-
-[tool.hatch.version]
-path = "src/tstr/__init__.py"
+ignore = ["E501", "E402", "S101"]
 
 [tool.coverage.report]
 exclude_also = [
