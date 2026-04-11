@@ -71,5 +71,6 @@ jobs:
         tag_name: v${{ steps.pkg_version.outputs.version }}
         name: v${{ steps.pkg_version.outputs.version }}
         generate_release_notes: true
+        token: ${{ secrets.RELEASE_CONTENTS_TOKEN }}
         files: |
           dist/*
