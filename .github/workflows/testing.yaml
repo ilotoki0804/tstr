@@ -38,5 +38,5 @@ jobs:
     - name: Upload coverage information to Coveralls
       uses: coverallsapp/github-action@v2
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ secrets.RELEASE_CONTENTS_TOKEN }}
         path-to-lcov: coverage.lcov
