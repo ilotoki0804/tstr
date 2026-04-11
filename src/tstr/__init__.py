@@ -44,4 +44,4 @@ __all__ = [
     "template_from_parts",
     "dedent",
 ]
-__version__ = "0.4.1b1"
+__version__ = "0.4.1b1.post1"
