@@ -47,6 +47,8 @@ jobs:
       id-token: write
 
     steps:
+    - uses: actions/checkout@v4
+
     - uses: actions/download-artifact@v4
       with:
         name: artifacts
@@ -60,8 +62,6 @@ jobs:
     - name: get package version
       id: pkg_version
       run: |
-        pwd
-        ls -al
         VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
         echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
