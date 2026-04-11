@@ -6,10 +6,10 @@ import unittest
 from collections.abc import Iterator, Iterable
 from string.templatelib import Template, Interpolation, convert
 
-from test.test_string._support import TStringBaseCase, fstring
+from _support import TStringTestCase, fstring
 
 
-class TestTemplate(unittest.TestCase, TStringBaseCase):
+class TestTemplate(TStringTestCase):
     def test_common(self):
         self.assertEqual(type(t'').__name__, 'Template')
         self.assertEqual(type(t'').__qualname__, 'Template')

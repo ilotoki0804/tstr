@@ -5,10 +5,10 @@ from __future__ import annotations
 
 import unittest
 
-from test.test_string._support import TStringBaseCase, fstring
+from _support import TStringTestCase, fstring
 
 
-class TestTString(unittest.TestCase, TStringBaseCase):
+class TestTString(TStringTestCase):
     def test_string_representation(self):
         # Test __repr__
         t = t"Hello"
